@@ -1,40 +1,36 @@
 package school.hei.lalana.marcheur;
 
-import java.util.ArrayList;
+import school.hei.lalana.carte.Carte;
+import school.hei.lalana.carte.Lieu;
+import school.hei.lalana.carte.Rue;
+
 import java.util.List;
 import java.util.Random;
 
 public class Marcheur {
 
-    private String lieuActuel;
-    private List<String> chemin;
+    private Lieu lieuActuel;
+    private Carte carte;
 
-    public Marcheur(String lieuDepart) {
-        this.lieuActuel = lieuDepart;
-        this.chemin = new ArrayList<>();
-        chemin.add(lieuDepart);
+    public Marcheur(Lieu lieuActuel, Carte carte) {
+        this.lieuActuel = lieuActuel;
+        this.carte = carte;
     }
 
-    public boolean seDeplacer(String destination, Carte carte) {
-        // Trouver le prochain lieu accessible au hasard
-        List<String> lieuxAccessibles = carte.getLieuxAccessibles(lieuActuel, chemin);
-        if (!lieuxAccessibles.isEmpty()) {
-            String prochainLieu = lieuxAccessibles.get(new Random().nextInt(lieuxAccessibles.size()));
-            lieuActuel = prochainLieu;
-            chemin.add(prochainLieu);
-            System.out.println("Se déplace de " + chemin.get(chemin.size() - 2) + " à " + chemin.get(chemin.size() - 1));
-            return true;
+    public Lieu getLieuActuel() {
+        return lieuActuel;
+    }
+
+    public void marcher() {
+        List<Rue> ruesPossibles = carte.getRuesDepuis(lieuActuel);
+        if (!ruesPossibles.isEmpty()) {
+            Random random = new Random();
+            Rue rueChoisie = ruesPossibles.get(random.nextInt(ruesPossibles.size()));
+            System.out.println("Marcheur se déplace de " + lieuActuel.getNom() + " à " + rueChoisie.getDestination().getNom());
+            lieuActuel = rueChoisie.getDestination();
         } else {
-            System.out.println("Aucune rue accessible depuis " + lieuActuel);
-            return false;
+            System.out.println("Aucune rue possible depuis " + lieuActuel.getNom());
         }
     }
 
-    public boolean estArrive(String destination) {
-        return lieuActuel.equals(destination);
-    }
-
-    public List<String> getChemin() {
-        return chemin;
-    }
 }
